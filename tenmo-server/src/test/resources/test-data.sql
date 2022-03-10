@@ -58,5 +58,9 @@ INSERT INTO transfer_status (transfer_status_desc) VALUES ('Rejected');
 INSERT INTO transfer_type (transfer_type_desc) VALUES ('Request');
 INSERT INTO transfer_type (transfer_type_desc) VALUES ('Send');
 -- TODO: add more data here
+INSERT INTO account (account_id, user_id, balance) VALUES (1, 1, 1000);
+INSERT INTO account (account_id, user_id, balance) VALUES (2, 2, 2000);
+INSERT INTO account (account_id, user_id, balance) VALUES (3, 3, 3000);
+INSERT INTO account (account_id, user_id, balance) VALUES (4, 3, 4000);
 INSERT INTO tenmo_user (username, password_hash) VALUES ('user', 'password');
 COMMIT;

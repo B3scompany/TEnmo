@@ -6,6 +6,6 @@ public class AccountNotFoundException extends Exception {
     }
 
     public AccountNotFoundException(){
-        this("Transfer not found.");
+        this("Account not found.");
     }
 }
