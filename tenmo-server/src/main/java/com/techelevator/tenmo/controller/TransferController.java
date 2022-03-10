@@ -3,24 +3,29 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
-import com.techelevator.tenmo.model.Transfer;
 
-public class AccountController {
+public class TransferController {
     private final AccountDao accountDao;
     private final TransferDao transferDao;
     private final UserDao userDao;
 
-    public AccountController(AccountDao accountDao, TransferDao transferDao, UserDao userDao) {
+    public TransferController(AccountDao accountDao, TransferDao transferDao, UserDao userDao) {
         this.accountDao = accountDao;
         this.transferDao = transferDao;
         this.userDao = userDao;
     }
 
-    //listUsers() Robert
+    // listTransfers(Principal principal) Robert
 
 
+    // completeTransfer(int fromAccountID, int toAccountId, double amount) Scott
 
-    //getBalance(account_id) Scott
+
+    // getTransferById(int transferId) Robert
+
+
+    // private createTransfer(Transfer transfer) Scott
+
 
 
 }
