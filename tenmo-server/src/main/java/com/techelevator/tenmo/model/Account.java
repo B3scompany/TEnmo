@@ -2,9 +2,13 @@ package com.techelevator.tenmo.model;
 
 import com.techelevator.tenmo.dao.UserDao;
 
+import javax.validation.constraints.Min;
+
+
 public class Account {
 
     private int accountId;
+    @Min(value = 1, message = "User Id should be a positive integer value")
     private int userId;
     private double balance;
     private UserDao userDao;
