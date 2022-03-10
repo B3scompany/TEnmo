@@ -4,6 +4,9 @@ import com.techelevator.tenmo.dao.UserDao;
 
 import javax.validation.constraints.Min;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 public class Account {
 
@@ -48,14 +51,19 @@ public class Account {
         if(amount < 0){
             throw new IllegalStateException("Credit amount must be positive.");
         }
-        balance = balance + amount;
+        BigDecimal bigDecimalBalance = new BigDecimal(balance);
+        BigDecimal bigDecimalAmount = new BigDecimal(amount);
+        balance = bigDecimalBalance.add(bigDecimalAmount).doubleValue();
     }
 
     public void subtractFromBalance(double amount){
         if(amount < 0 || amount > balance){
             throw new IllegalStateException("Debit amount must be a positive number less than the balance.");
         }
-        balance = balance - amount;
+
+        BigDecimal bigDecimalBalance = new BigDecimal(balance);
+        BigDecimal bigDecimalAmount = new BigDecimal(amount);
+        balance = bigDecimalBalance.subtract(bigDecimalAmount).doubleValue();
     }
 
     public User getAccountUser(){

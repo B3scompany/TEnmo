@@ -37,7 +37,7 @@ public class JdbcTransferDao implements TransferDao {
     @Override
     public Transfer getTransferById(int transferId) throws TransferNotFoundException {
 
-        String sql = "SELECT transfer_status_desc, transfer_type_desc, transfer_status_id, account_from, account_to, amount FROM transfer " +
+        String sql = "SELECT transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, account_from, account_to, amount FROM transfer " +
                 "JOIN transfer_status USING (transfer_status_id) " +
                 "JOIN transfer_type USING(transfer_type_id) " +
                 "WHERE transfer_id = ?;";
@@ -53,12 +53,13 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public List<Transfer> getAllTransfersForUser(int userId) {
-        String sql = "SELECT transfer_status_desc, transfer_type_desc, transfer_status_id, account_from, account_to, amount FROM transfer " +
+        String sql = "SELECT transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, account_from, account_to, amount FROM transfer " +
+                "JOIN account ON account_to = account_id OR transfer.account_from = account_id " +
                 "JOIN tenmo_user USING(user_id) " +
                 "JOIN transfer_status USING (transfer_status_id) " +
                 "JOIN transfer_type USING(transfer_type_id) " +
-                "WHERE account_from = ? OR account_to = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
+                "WHERE user_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
 
         List<Transfer> allTransfersForUser = new ArrayList<>();
 
@@ -107,7 +108,7 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     private Transfer mapRowToTransfer(SqlRowSet row) {
-        Transfer transfer = new Transfer(accountDao);
+        Transfer transfer = new Transfer();
         transfer.setTransferId(row.getInt("transfer_id"));
         transfer.setTransferType(row.getString("transfer_type_desc"));
         transfer.setTransferStatus(row.getString("transfer_status_id"));

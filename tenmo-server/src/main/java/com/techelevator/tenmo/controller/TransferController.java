@@ -9,6 +9,7 @@ import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.services.ServerTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,20 +34,31 @@ public class TransferController {
 
     // listTransfers(Principal principal) Robert
     @RequestMapping(path = "/transfers", method = RequestMethod.GET)
-    public List<Transfer> transferList(Principal principal){
+    public List<Transfer> transferList(Principal principal) throws AuthorizationException {
+        if(principal == null) {
+            throw new AuthorizationException();
+        }
         return transferDao.getAllTransfersForUser(userDao.findIdByUsername(principal.getName()));
     }
 
 
     // completeTransfer(Transfer) Scott
+    @Transactional
     @RequestMapping(path = "/transfers", method = RequestMethod.POST)
     public void completeTransfer(@RequestBody @Valid Transfer transfer, Principal principal) throws TransferNotFoundException, AccountNotFoundException, AuthorizationException {
-        int fromAccountUserId = transfer.getFromAccount().getUserId();
-        int principalUserId = userDao.findIdByUsername(principal.getName());
-        if(fromAccountUserId != principalUserId){
-            throw new AuthorizationException();
+
+        if(transfer.getTransferType().equalsIgnoreCase("Send")) {
+            if (!transferService.isPrincipalFromAccountUser(principal, transfer)) {
+                throw new AuthorizationException();
+            }
+            transferService.completeTransfer(transfer);
+        } else {
+            if(!transferService.isPrincipalToAccountUser(principal, transfer)){
+                throw new AuthorizationException();
+            }
+            transfer.setTransferStatus("Pending");
+            transferService.saveTransferRequest(transfer);
         }
-        transferService.completeTransfer(transfer);
     }
 
     // getTransferById(int transferId) Robert
