@@ -1,18 +1,14 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
-import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.exception.AccountNotFoundException;
 import com.techelevator.tenmo.exception.AuthorizationException;
 import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.Transfer;
 import org.springframework.web.bind.annotation.*;
 import com.techelevator.tenmo.model.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import java.security.Principal;
@@ -20,12 +16,10 @@ import java.security.Principal;
 @RestController
 public class AccountController {
     private final AccountDao accountDao;
-    private final TransferDao transferDao;
     private final UserDao userDao;
 
-    public AccountController(AccountDao accountDao, TransferDao transferDao, UserDao userDao) {
+    public AccountController(AccountDao accountDao, UserDao userDao) {
         this.accountDao = accountDao;
-        this.transferDao = transferDao;
         this.userDao = userDao;
     }
 

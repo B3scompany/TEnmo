@@ -22,7 +22,7 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public Account getAccountById(int accountId) throws AccountNotFoundException {
-        String sql = "SELECT * " +
+        String sql = "SELECT account_id, user_id, balance " +
                 "FROM account " +
                 "WHERE account_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
