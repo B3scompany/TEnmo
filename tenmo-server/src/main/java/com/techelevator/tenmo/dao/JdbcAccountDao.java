@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,13 @@ public class JdbcAccountDao implements AccountDao {
         this.jdbcTemplate = jdbcTemplate;
         this.userDao = userDao;
     }
+    public JdbcAccountDao(DataSource dataSource, UserDao userDao){
+        this.userDao = userDao;
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+
+
+    }
+
 
     @Override
     public Account getAccountById(int accountId) throws AccountNotFoundException {
