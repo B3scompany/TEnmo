@@ -9,7 +9,6 @@ import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.security.Principal;
 
 @Component
@@ -29,17 +28,13 @@ public class ServerTransferServiceImpl implements ServerTransferService {
     @Override
     public void completeTransfer(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException {
 
-        Account fromAccount = transfer.getFromAccount();
-        Account toAccount = transfer.getToAccount();
+        validTransferCheck(transfer);
+
+        transfer.setTransferStatus("Approved");
+
+        Account fromAccount = accountDao.getAccountById(transfer.getAccountFromId());
+        Account toAccount = accountDao.getAccountById(transfer.getAccountToId());
         double amount = transfer.getAmount();
-
-        if(fromAccount.getAccountId() == toAccount.getAccountId()){
-            throw new IllegalArgumentException("Accounts cannot be the same.");
-        }
-
-        if(!hasSufficientFunds(fromAccount, amount)){
-            throw new IllegalStateException("Account from balance must be equal to or greater than transfer amount)");
-        }
 
         fromAccount.subtractFromBalance(amount);
         toAccount.addToBalance(amount);
@@ -51,15 +46,47 @@ public class ServerTransferServiceImpl implements ServerTransferService {
     }
 
     @Override
+    public void saveTransferRequest(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException {
+        transfer.setTransferStatus("Pending");
+        validTransferCheck(transfer);
+        transferDao.create(transfer);
+    }
+
+    @Override
     public boolean isPrincipalPartyToTransfer(Principal principal, Transfer transfer) throws AccountNotFoundException {
+        return isPrincipalFromAccountUser(principal, transfer) || isPrincipalToAccountUser(principal, transfer);
+    }
+
+    @Override
+    public boolean isPrincipalFromAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException {
         int userId = userDao.findIdByUsername(principal.getName());
         int fromAccountUserId = accountDao.getAccountById(transfer.getAccountFromId()).getUserId();
+        return userId == fromAccountUserId;
+    }
+
+    @Override
+    public boolean isPrincipalToAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException {
+        int userId = userDao.findIdByUsername(principal.getName());
         int toAccountUserId = accountDao.getAccountById(transfer.getAccountToId()).getUserId();
-        return userId == fromAccountUserId || userId == toAccountUserId;
+        return userId == toAccountUserId;
     }
 
     private boolean hasSufficientFunds(Account fromAccount, double amount){
         return fromAccount.getBalance() >= amount;
     }
 
+
+    private void validTransferCheck(Transfer transfer) throws AccountNotFoundException {
+        Account fromAccount = accountDao.getAccountById(transfer.getAccountFromId());
+        Account toAccount = accountDao.getAccountById(transfer.getAccountToId());
+        double amount = transfer.getAmount();
+
+        if(fromAccount.getAccountId() == toAccount.getAccountId()){
+            throw new IllegalArgumentException("Accounts cannot be the same.");
+        }
+
+        if(!hasSufficientFunds(fromAccount, amount)){
+            throw new IllegalStateException("Account from balance must be equal to or greater than transfer amount)");
+        }
+    }
 }
