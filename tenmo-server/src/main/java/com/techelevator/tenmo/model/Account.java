@@ -1,10 +1,17 @@
 package com.techelevator.tenmo.model;
 
+import com.techelevator.tenmo.dao.UserDao;
+
 public class Account {
 
     private int accountId;
     private int userId;
     private double balance;
+    private UserDao userDao;
+
+    public Account(UserDao userDao){
+        this.userDao = userDao;
+    }
 
     public int getAccountId() {
         return accountId;
@@ -32,4 +39,23 @@ public class Account {
         this.balance = balance;
         return this;
     }
+
+    public void addToBalance(double amount){
+        if(amount < 0){
+            throw new IllegalStateException("Credit amount must be positive.");
+        }
+        balance = balance + amount;
+    }
+
+    public void subtractFromBalance(double amount){
+        if(amount < 0 || amount > balance){
+            throw new IllegalStateException("Debit amount must be a positive number less than the balance.");
+        }
+        balance = balance - amount;
+    }
+
+    public User getAccountUser(){
+        return userDao.findByUserId(userId);
+    }
+
 }

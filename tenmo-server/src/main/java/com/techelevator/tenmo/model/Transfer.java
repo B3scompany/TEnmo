@@ -1,13 +1,37 @@
 package com.techelevator.tenmo.model;
 
+import com.techelevator.tenmo.dao.AccountDao;
+import com.techelevator.tenmo.dao.TransferDao;
+import com.techelevator.tenmo.exception.AccountNotFoundException;
+
+import javax.validation.constraints.*;
+import java.security.Principal;
+
 public class Transfer {
 
     private int transferId;
+
+    @NotBlank
     private String transferType;
+    @NotBlank
     private String transferStatus;
+
+    @NotNull
+    @Positive(message = "accountFromId should be a positive integer value.")
     private int accountFromId;
+
+    @NotNull
+    @Positive(message = "accountToId should be a positive integer value.")
     private int accountToId;
+
+    @Positive(message = "transfer amount must be positive.")
     private double amount;
+
+    private AccountDao accountDao;
+
+    public Transfer(AccountDao accountDao){
+        this.accountDao = accountDao;
+    }
 
     public int getTransferId() {
         return transferId;
@@ -62,4 +86,12 @@ public class Transfer {
         this.amount = amount;
         return this;
     }
+
+    public Account getFromAccount() throws AccountNotFoundException {
+        return accountDao.getAccountById(accountFromId);
+    }
+    public Account getToAccount() throws AccountNotFoundException {
+        return accountDao.getAccountById(accountToId);
+    }
+
 }
