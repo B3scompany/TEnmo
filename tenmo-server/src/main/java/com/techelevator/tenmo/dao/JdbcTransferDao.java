@@ -13,9 +13,11 @@ import java.util.List;
 public class JdbcTransferDao implements TransferDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final AccountDao accountDao;
 
-    public JdbcTransferDao(JdbcTemplate jdbcTemplate){
+    public JdbcTransferDao(JdbcTemplate jdbcTemplate, AccountDao accountDao){
         this.jdbcTemplate = jdbcTemplate;
+        this.accountDao = accountDao;
     }
 
     @Override
@@ -105,7 +107,7 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     private Transfer mapRowToTransfer(SqlRowSet row) {
-        Transfer transfer = new Transfer();
+        Transfer transfer = new Transfer(accountDao);
         transfer.setTransferId(row.getInt("transfer_id"));
         transfer.setTransferType(row.getString("transfer_type_desc"));
         transfer.setTransferStatus(row.getString("transfer_status_id"));

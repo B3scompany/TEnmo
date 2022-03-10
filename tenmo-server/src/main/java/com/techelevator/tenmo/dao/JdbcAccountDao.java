@@ -13,9 +13,11 @@ import java.util.List;
 @Component
 public class JdbcAccountDao implements AccountDao {
     private final JdbcTemplate jdbcTemplate;
+    private final UserDao userDao;
 
-    public JdbcAccountDao(JdbcTemplate jdbcTemplate){
+    public JdbcAccountDao(JdbcTemplate jdbcTemplate, UserDao userDao){
         this.jdbcTemplate = jdbcTemplate;
+        this.userDao = userDao;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class JdbcAccountDao implements AccountDao {
         }
     }
     public Account mapRowToAccount(SqlRowSet rowSet){
-        Account account = new Account();
+        Account account = new Account(userDao);
         account.setAccountId(rowSet.getInt("account_id"));
         account.setUserId(rowSet.getInt("user_id"));
         account.setBalance(rowSet.getDouble("balance"));
