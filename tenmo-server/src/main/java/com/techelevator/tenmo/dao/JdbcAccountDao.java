@@ -20,10 +20,6 @@ public class JdbcAccountDao implements AccountDao {
         this.jdbcTemplate = jdbcTemplate;
         this.userDao = userDao;
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> 5f24724d93be5ab79db9e8eb7ad4cbd17ba8333e
 
     @Override
     public Account getAccountById(int accountId) throws AccountNotFoundException {

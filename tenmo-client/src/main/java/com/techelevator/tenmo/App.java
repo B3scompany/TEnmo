@@ -1,9 +1,14 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.services.AccountService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.UserService;
+
+import java.util.List;
 
 public class App {
 
@@ -11,6 +16,7 @@ public class App {
 
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
+    private final UserService userService = new UserService();
 
     private AuthenticatedUser currentUser;
 
@@ -101,13 +107,32 @@ public class App {
 	}
 
 	private void sendBucks() { //Scott
-		// TODO Auto-generated method stub
-		
+        List<User> userList = userService.getAllUsersExceptCurrentUser(currentUser);
+		User recipientUser = chooseRecipientUser(userList);
+        if(recipientUser != null){
+
+        }
+
 	}
 
 	private void requestBucks() { //Scott
 		// TODO Auto-generated method stub
 		
 	}
+
+    private User chooseRecipientUser(List<User> userList){
+
+        int recipientSelection = -1;
+
+        while(recipientSelection < 0 || recipientSelection > userList.size()) {
+            consoleService.printUserList(userList);
+            consoleService.promptForInt("Please choose a user to send bucks to: ");
+        }
+
+        if(recipientSelection == 0) { return null; }
+
+        return userList.get(recipientSelection-1);
+
+    }
 
 }
