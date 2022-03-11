@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import com.techelevator.tenmo.model.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import java.security.Principal;
@@ -30,16 +32,21 @@ public class AccountController {
     }
 
 
-
-    //getBalance(account_id) Scott
     @GetMapping
-    @RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
-    public double getBalance(@PathVariable int id, Principal principal) throws AccountNotFoundException, AuthorizationException {
-        Account account = accountDao.getAccountById(id);
-        if(!principal.getName().equals(account.getAccountUser().getUsername())){
+    @RequestMapping(path = "/users/{userId}/accounts/balance", method = RequestMethod.GET)
+    public double getBalance(@PathVariable int userId, Principal principal) throws AccountNotFoundException, AuthorizationException {
+
+        if(principal.getName() != userDao.findByUserId(userId).getUsername()){
             throw new AuthorizationException();
         }
-        return account.getBalance();
+
+        List<Account> accounts = accountDao.getAllAccountsByUser(userId);
+
+        BigDecimal bigDecimalTotalBalance = BigDecimal.valueOf(0);
+        for(Account account: accounts){
+            bigDecimalTotalBalance.add(BigDecimal.valueOf(account.getBalance()));
+        }
+        return bigDecimalTotalBalance.doubleValue();
     }
 
 }

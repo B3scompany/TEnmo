@@ -1,9 +1,11 @@
 package com.techelevator.tenmo.services;
 
 
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleService {
@@ -88,4 +90,11 @@ public class ConsoleService {
         System.out.println("An error occurred. Check the log for details.");
     }
 
+    public void printUserList(List<User> userList){
+        for(int i = 1; i <= userList.size(); i++){
+            System.out.print(i + ". ");
+            System.out.println(userList.get(i).getUsername());
+        }
+        System.out.println("0. Cancel Transfer");
+    }
 }
