@@ -12,12 +12,10 @@ public class Transfer {
     private String transferStatus;
 
     @NotNull
-    @Positive(message = "userFromId should be a positive integer value.")
-    private int userFromId;
+    private UserPublicData fromUser;
 
     @NotNull
-    @Positive(message = "userToId should be a positive integer value.")
-    private int userToId;
+    private UserPublicData toUser;
 
     @Positive(message = "transfer amount must be positive.")
     private double amount;
@@ -49,21 +47,21 @@ public class Transfer {
         return this;
     }
 
-    public int getUserFromId() {
-        return userFromId;
+    public UserPublicData getFromUser() {
+        return fromUser;
     }
 
-    public Transfer setUserFromId(int userFromId) {
-        this.userFromId = userFromId;
+    public Transfer setFromUser(UserPublicData fromUser) {
+        this.fromUser = fromUser;
         return this;
     }
 
-    public int getUserToId() {
-        return userToId;
+    public UserPublicData getToUser() {
+        return toUser;
     }
 
-    public Transfer setUserToId(int userToId) {
-        this.userToId = userToId;
+    public Transfer setToUser(UserPublicData toUser) {
+        this.toUser = toUser;
         return this;
     }
 
