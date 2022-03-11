@@ -5,6 +5,7 @@ import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.*;
+import io.cucumber.java.bs.A;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class App {
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private final UserService userService = new UserService();
     private final TransferService transferService = new TransferService();
+    private final AccountService accountService = new AccountService();
 
     private AuthenticatedUser currentUser;
 
@@ -94,11 +96,18 @@ public class App {
 		// TODO Auto-generated method stub
 		// accountService.getUserBalance(currentUser)
         // print stuff out
+
+        System.out.println("Your current balance is: " + accountService.getCurrentBalance(currentUser));
 	}
 
 	private void viewTransferHistory() { //Robert
 		// TODO Auto-generated method stub
-		
+        List<Transfer> transferHistory = transferService.transferHistory(currentUser);
+		for(Transfer transfer : transferHistory){
+            System.out.println(currentUser.getUser().getUsername());
+            System.out.println(transfer.getTransferType());
+            System.out.println("$" + transfer.getAmount() + " Paid to userID:" + transfer.getUserToId());
+        }
 	}
 
 	private void viewPendingRequests() { //Maybe

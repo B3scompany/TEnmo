@@ -17,6 +17,21 @@ public class TransferService {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String API_BASE_URL = "http://localhost:8080/";
 
+    public List<Transfer> transferHistory(AuthenticatedUser currentUser){
+        List<Transfer> transferHistory = null;
+        try{
+            ResponseEntity<Transfer[]> response =
+                    restTemplate.exchange(API_BASE_URL + "transfers", HttpMethod.GET,
+                            makeAuthEntity(currentUser), Transfer[].class);
+            Transfer[] transfers = response.getBody();
+            transferHistory = new ArrayList<>(List.of(transfers));
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transferHistory;
+
+    }
+
     public Transfer submitSendTransfer(Transfer transfer, AuthenticatedUser currentUser){
         Transfer result = null;
         try {
