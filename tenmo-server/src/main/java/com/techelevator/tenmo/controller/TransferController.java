@@ -9,6 +9,7 @@ import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.services.ServerTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,20 +45,21 @@ public class TransferController {
 
     // completeTransfer(Transfer) Scott
     @Transactional
+    @ResponseStatus(value = HttpStatus.CREATED)
     @RequestMapping(path = "/transfers", method = RequestMethod.POST)
-    public void completeTransfer(@RequestBody @Valid Transfer transfer, Principal principal) throws TransferNotFoundException, AccountNotFoundException, AuthorizationException {
+    public Transfer completeTransfer(@RequestBody @Valid Transfer transfer, Principal principal) throws TransferNotFoundException, AccountNotFoundException, AuthorizationException {
 
         if(transfer.getTransferType().equalsIgnoreCase("Send")) {
             if (!transferService.isPrincipalFromAccountUser(principal, transfer)) {
                 throw new AuthorizationException();
             }
-            transferService.completeTransfer(transfer);
+            return transferService.completeTransfer(transfer);
         } else {
             if(!transferService.isPrincipalToAccountUser(principal, transfer)){
                 throw new AuthorizationException();
             }
             transfer.setTransferStatus("Pending");
-            transferService.saveTransferRequest(transfer);
+            return transferService.saveTransferRequest(transfer);
         }
     }
 

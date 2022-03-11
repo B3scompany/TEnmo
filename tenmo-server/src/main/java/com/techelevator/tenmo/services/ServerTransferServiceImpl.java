@@ -26,7 +26,7 @@ public class ServerTransferServiceImpl implements ServerTransferService {
     }
 
     @Override
-    public void completeTransfer(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException {
+    public Transfer completeTransfer(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException {
 
         validTransferCheck(transfer);
 
@@ -41,15 +41,15 @@ public class ServerTransferServiceImpl implements ServerTransferService {
 
         accountDao.update(fromAccount, fromAccount.getAccountId());
         accountDao.update(toAccount, toAccount.getAccountId());
-        transferDao.create(transfer);
+        return transferDao.create(transfer);
 
     }
 
     @Override
-    public void saveTransferRequest(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException {
+    public Transfer saveTransferRequest(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException {
         transfer.setTransferStatus("Pending");
         validTransferCheck(transfer);
-        transferDao.create(transfer);
+        return transferDao.create(transfer);
     }
 
     @Override
