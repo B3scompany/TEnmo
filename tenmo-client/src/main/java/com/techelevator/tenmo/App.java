@@ -85,27 +85,27 @@ public class App {
         }
     }
 
-	private void viewCurrentBalance() {
+	private void viewCurrentBalance() { //Robert
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void viewTransferHistory() {
+	private void viewTransferHistory() { //Robert
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void viewPendingRequests() {
+	private void viewPendingRequests() { //Maybe
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void sendBucks() {
+	private void sendBucks() { //Scott
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void requestBucks() {
+	private void requestBucks() { //Scott
 		// TODO Auto-generated method stub
 		
 	}

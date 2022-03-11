@@ -20,12 +20,6 @@ public class JdbcAccountDao implements AccountDao {
         this.jdbcTemplate = jdbcTemplate;
         this.userDao = userDao;
     }
-    public JdbcAccountDao(DataSource dataSource, UserDao userDao){
-        this.userDao = userDao;
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-
-
-    }
 
 
     @Override

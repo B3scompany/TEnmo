@@ -19,7 +19,7 @@ public class TestingDatabaseConfig {
     private static final String DB_PORT =
             Objects.requireNonNullElse(System.getenv("DB_PORT"), "5432");
     private static final String DB_NAME =
-            Objects.requireNonNullElse(System.getenv("DB_NAME"), "tenmo");
+            Objects.requireNonNullElse(System.getenv("DB_NAME"), "tenmotesting");
     private static final String DB_USER =
             Objects.requireNonNullElse(System.getenv("DB_USER"), "postgres");
     private static final String DB_PASSWORD =
