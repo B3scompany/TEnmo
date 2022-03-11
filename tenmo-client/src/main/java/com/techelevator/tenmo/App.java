@@ -1,12 +1,10 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AccountService;
-import com.techelevator.tenmo.services.AuthenticationService;
-import com.techelevator.tenmo.services.ConsoleService;
-import com.techelevator.tenmo.services.UserService;
+import com.techelevator.tenmo.services.*;
 
 import java.util.List;
 
@@ -17,6 +15,7 @@ public class App {
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private final UserService userService = new UserService();
+    private final TransferService transferService = new TransferService();
 
     private AuthenticatedUser currentUser;
 
@@ -93,7 +92,8 @@ public class App {
 
 	private void viewCurrentBalance() { //Robert
 		// TODO Auto-generated method stub
-		
+		// accountService.getUserBalance(currentUser)
+        // print stuff out
 	}
 
 	private void viewTransferHistory() { //Robert
@@ -109,10 +109,22 @@ public class App {
 	private void sendBucks() { //Scott
         List<User> userList = userService.getAllUsersExceptCurrentUser(currentUser);
 		User recipientUser = chooseRecipientUser(userList);
+
         if(recipientUser != null){
-
+            double amountToSend = chooseAmountToSend();
+            Transfer transfer = new Transfer()
+                    .setTransferStatus("Approved")
+                    .setTransferType("Send")
+                    .setUserFromId(currentUser.getUser().getId().intValue())
+                    .setUserToId(recipientUser.getId().intValue())
+                    .setAmount(amountToSend);
+            Transfer completed = transferService.submitSendTransfer(transfer, currentUser);
+            if(completed != null){
+                consoleService.printMessage("Transfer completed: " + completed.getTransferId());
+            } else {
+                consoleService.printMessage("Error completing transfer.");
+            }
         }
-
 	}
 
 	private void requestBucks() { //Scott
@@ -126,13 +138,17 @@ public class App {
 
         while(recipientSelection < 0 || recipientSelection > userList.size()) {
             consoleService.printUserList(userList);
-            consoleService.promptForInt("Please choose a user to send bucks to: ");
+            recipientSelection = consoleService.promptForInt("Please choose a user to send bucks to: ");
         }
 
         if(recipientSelection == 0) { return null; }
 
         return userList.get(recipientSelection-1);
 
+    }
+
+    private double chooseAmountToSend(){
+        return consoleService.promptForBigDecimal("Please enter an amount to send: ").doubleValue();
     }
 
 }

@@ -22,13 +22,15 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public Transfer create(Transfer transfer) throws TransferNotFoundException {
-        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES(?, ?, ?, ?, ?) RETURNING transfer_id;";
+        String sql = "INSERT INTO transfer " +
+                "(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                "VALUES(?, ?, ?, ?, ?) RETURNING transfer_id;";
 
         int newId = jdbcTemplate.queryForObject(sql, Integer.class,
                 getTransferTypeIdByDesc(transfer.getTransferType()),
                 getTransferStatusIdByDesc(transfer.getTransferStatus()),
-                transfer.getAccountFromId(),
-                transfer.getAccountToId(),
+                accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0).getAccountId(),
+                accountDao.getAllAccountsByUser(transfer.getUserToId()).get(0).getAccountId(),
                 transfer.getAmount());
 
         return getTransferById(newId);
@@ -37,8 +39,14 @@ public class JdbcTransferDao implements TransferDao {
     @Override
     public Transfer getTransferById(int transferId) throws TransferNotFoundException {
 
-        String sql = "SELECT transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, account_from, account_to, amount FROM transfer " +
-                "JOIN transfer_status USING (transfer_status_id) " +
+        String sql =
+
+                "SELECT transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, from_user_id, to_user_id, amount " +
+                "FROM " +
+                "(SELECT user_id as from_user_id, account_id as from_account FROM account JOIN tenmo_user USING(user_id)) account_from_data " +
+                "JOIN transfer ON transfer.account_from = account_from_data.from_account " +
+                "JOIN (SELECT user_id as to_user_id, account_id as to_account FROM account) to_account_data ON to_account = transfer.account_to " +
+                "JOIN transfer_status USING (transfer_status_id)\n" +
                 "JOIN transfer_type USING(transfer_type_id) " +
                 "WHERE transfer_id = ?;";
 
@@ -53,13 +61,18 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public List<Transfer> getAllTransfersForUser(int userId) {
-        String sql = "SELECT transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, account_from, account_to, amount FROM transfer " +
-                "JOIN account ON account_to = account_id OR transfer.account_from = account_id " +
-                "JOIN tenmo_user USING(user_id) " +
-                "JOIN transfer_status USING (transfer_status_id) " +
+        String sql =
+
+                "SELECT transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, from_user_id, to_user_id, amount " +
+                "FROM " +
+                "(SELECT user_id as from_user_id, account_id as from_account FROM account JOIN tenmo_user USING(user_id)) account_from_data " +
+                "JOIN transfer ON transfer.account_from = account_from_data.from_account " +
+                "JOIN (SELECT user_id as to_user_id, account_id as to_account FROM account) to_account_data ON to_account = transfer.account_to " +
+                "JOIN transfer_status USING (transfer_status_id)\n" +
                 "JOIN transfer_type USING(transfer_type_id) " +
-                "WHERE user_id = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+                "WHERE from_user_id = ? OR to_user_id = ?;";
+
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
 
         List<Transfer> allTransfersForUser = new ArrayList<>();
 
@@ -75,6 +88,7 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public Transfer updateTransfer(Transfer transfer, int transferId) throws TransferNotFoundException {
+
         String sql = "UPDATE transfer " +
                 "SET transfer_id = ?," +
                 "transfer_type_id = ?," +
@@ -88,8 +102,8 @@ public class JdbcTransferDao implements TransferDao {
                 transfer.getTransferId(),
                 getTransferTypeIdByDesc(transfer.getTransferType()),
                 getTransferStatusIdByDesc(transfer.getTransferStatus()),
-                transfer.getAccountFromId(),
-                transfer.getAccountToId(),
+                accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0).getAccountId(),
+                accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0).getAccountId(),
                 transfer.getAmount(),
                 transferId);
 
@@ -112,8 +126,8 @@ public class JdbcTransferDao implements TransferDao {
         transfer.setTransferId(row.getInt("transfer_id"));
         transfer.setTransferType(row.getString("transfer_type_desc"));
         transfer.setTransferStatus(row.getString("transfer_status_id"));
-        transfer.setAccountFromId(row.getInt("account_from"));
-        transfer.setAccountToId(row.getInt("account_to"));
+        transfer.setUserFromId(row.getInt("from_user_id"));
+        transfer.setUserToId(row.getInt("to_user_id"));
         transfer.setAmount(row.getDouble("amount"));
         return transfer;
     }

@@ -1,9 +1,5 @@
 package com.techelevator.tenmo.model;
 
-import com.techelevator.tenmo.dao.AccountDao;
-import com.techelevator.tenmo.exception.AccountNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.validation.constraints.*;
 
 public class Transfer {
@@ -16,12 +12,12 @@ public class Transfer {
     private String transferStatus;
 
     @NotNull
-    @Positive(message = "accountFromId should be a positive integer value.")
-    private int accountFromId;
+    @Positive(message = "userFromId should be a positive integer value.")
+    private int userFromId;
 
     @NotNull
-    @Positive(message = "accountToId should be a positive integer value.")
-    private int accountToId;
+    @Positive(message = "userToId should be a positive integer value.")
+    private int userToId;
 
     @Positive(message = "transfer amount must be positive.")
     private double amount;
@@ -53,21 +49,21 @@ public class Transfer {
         return this;
     }
 
-    public int getAccountFromId() {
-        return accountFromId;
+    public int getUserFromId() {
+        return userFromId;
     }
 
-    public Transfer setAccountFromId(int accountFromId) {
-        this.accountFromId = accountFromId;
+    public Transfer setUserFromId(int userFromId) {
+        this.userFromId = userFromId;
         return this;
     }
 
-    public int getAccountToId() {
-        return accountToId;
+    public int getUserToId() {
+        return userToId;
     }
 
-    public Transfer setAccountToId(int accountToId) {
-        this.accountToId = accountToId;
+    public Transfer setUserToId(int userToId) {
+        this.userToId = userToId;
         return this;
     }
 

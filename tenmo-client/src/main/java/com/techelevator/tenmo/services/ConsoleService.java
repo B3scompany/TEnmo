@@ -93,8 +93,13 @@ public class ConsoleService {
     public void printUserList(List<User> userList){
         for(int i = 1; i <= userList.size(); i++){
             System.out.print(i + ". ");
-            System.out.println(userList.get(i).getUsername());
+            System.out.println(userList.get(i-1).getUsername());
         }
         System.out.println("0. Cancel Transfer");
     }
+
+    public void printMessage(String message){
+        System.out.println(message);
+    }
+
 }

@@ -3,11 +3,12 @@ package com.techelevator.tenmo.model;
 
 public class Transfer {
 
+
     private int transferId;
     private String transferType;
     private String transferStatus;
-    private int accountFromId;
-    private int accountToId;
+    private int userFromId;
+    private int userToId;
     private double amount;
 
     public int getTransferId() {
@@ -32,26 +33,26 @@ public class Transfer {
         return transferStatus;
     }
 
-    public Transfer setTransferStatus(String transferStatus){
+    public Transfer setTransferStatus(String transferStatus) {
         this.transferStatus = transferStatus;
         return this;
     }
 
-    public int getAccountFromId() {
-        return accountFromId;
+    public int getUserFromId() {
+        return userFromId;
     }
 
-    public Transfer setAccountFromId(int accountFromId) {
-        this.accountFromId = accountFromId;
+    public Transfer setUserFromId(int userFromId) {
+        this.userFromId = userFromId;
         return this;
     }
 
-    public int getAccountToId() {
-        return accountToId;
+    public int getUserToId() {
+        return userToId;
     }
 
-    public Transfer setAccountToId(int accountToId) {
-        this.accountToId = accountToId;
+    public Transfer setUserToId(int userToId) {
+        this.userToId = userToId;
         return this;
     }
 
