@@ -3,6 +3,7 @@ package com.techelevator.tenmo.services;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.model.UserPublicData;
 import com.techelevator.util.BasicLogger;
 import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
@@ -46,6 +47,16 @@ public class TransferService {
         return result;
     }
 
+    public Transfer transferOf(User fromUser, User toUser, double amount, String transferType, String transferStatus){
+        Transfer result = new Transfer()
+                .setFromUser(new UserPublicData().setUsername(fromUser.getUsername()).setId(fromUser.getId().intValue()))
+                .setToUser(new UserPublicData().setUsername(toUser.getUsername()).setId(toUser.getId().intValue()))
+                .setAmount(amount)
+                .setTransferType(transferType)
+                .setTransferStatus(transferStatus);
+        return result;
+    }
+
     private HttpEntity<Void> makeAuthEntity(AuthenticatedUser currentUser) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(currentUser.getToken());
@@ -59,5 +70,7 @@ public class TransferService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(transfer, headers);
     }
+
+
 
 }

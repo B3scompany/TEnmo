@@ -32,8 +32,8 @@ public class ServerTransferServiceImpl implements ServerTransferService {
 
         transfer.setTransferStatus("Approved");
 
-        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0);
-        Account toAccount = accountDao.getAllAccountsByUser(transfer.getUserToId()).get(0);
+        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getFromUser().getId()).get(0);
+        Account toAccount = accountDao.getAllAccountsByUser(transfer.getToUser().getId()).get(0);
         double amount = transfer.getAmount();
 
         fromAccount.subtractFromBalance(amount);
@@ -60,13 +60,13 @@ public class ServerTransferServiceImpl implements ServerTransferService {
     @Override
     public boolean isPrincipalFromAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException {
         int userId = userDao.findIdByUsername(principal.getName());;
-        return userId == transfer.getUserFromId();
+        return userId == transfer.getFromUser().getId();
     }
 
     @Override
     public boolean isPrincipalToAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException {
         int userId = userDao.findIdByUsername(principal.getName());
-        return userId == transfer.getUserToId();
+        return userId == transfer.getToUser().getId();
     }
 
     private boolean hasSufficientFunds(Account fromAccount, double amount){
@@ -76,7 +76,7 @@ public class ServerTransferServiceImpl implements ServerTransferService {
     private void validTransferCheck(Transfer transfer) throws AccountNotFoundException {
         validAccountsForTransferCheck(transfer);
 
-        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0);
+        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getFromUser().getId()).get(0);
         double amount = transfer.getAmount();
 
         if(!hasSufficientFunds(fromAccount, amount)){
@@ -85,8 +85,8 @@ public class ServerTransferServiceImpl implements ServerTransferService {
     }
 
     private void validAccountsForTransferCheck(Transfer transfer) throws AccountNotFoundException {
-        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0);
-        Account toAccount = accountDao.getAllAccountsByUser(transfer.getUserToId()).get(0);
+        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getFromUser().getId()).get(0);
+        Account toAccount = accountDao.getAllAccountsByUser(transfer.getToUser().getId()).get(0);
 
         if(fromAccount.getAccountId() == toAccount.getAccountId()){
             throw new IllegalArgumentException("Accounts cannot be the same.");

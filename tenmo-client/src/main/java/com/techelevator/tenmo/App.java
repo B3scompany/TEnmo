@@ -121,12 +121,7 @@ public class App {
 
         if(recipientUser != null){
             double amountToSend = chooseAmountToSend();
-            Transfer transfer = new Transfer()
-                    .setTransferStatus("Approved")
-                    .setTransferType("Send")
-                    .setUserFromId(currentUser.getUser().getId().intValue())
-                    .setUserToId(recipientUser.getId().intValue())
-                    .setAmount(amountToSend);
+            Transfer transfer = transferService.transferOf(currentUser.getUser(), recipientUser, amountToSend, "Send", "Approved");
             Transfer completed = transferService.submitSendTransfer(transfer, currentUser);
             if(completed != null){
                 consoleService.printMessage("Transfer completed: " + completed.getTransferId());
