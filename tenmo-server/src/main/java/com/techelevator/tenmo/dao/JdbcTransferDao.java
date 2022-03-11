@@ -2,6 +2,7 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.UserPublicData;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -29,8 +30,8 @@ public class JdbcTransferDao implements TransferDao {
         int newId = jdbcTemplate.queryForObject(sql, Integer.class,
                 getTransferTypeIdByDesc(transfer.getTransferType()),
                 getTransferStatusIdByDesc(transfer.getTransferStatus()),
-                accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0).getAccountId(),
-                accountDao.getAllAccountsByUser(transfer.getUserToId()).get(0).getAccountId(),
+                accountDao.getAllAccountsByUser(transfer.getFromUser().getId()).get(0).getAccountId(),
+                accountDao.getAllAccountsByUser(transfer.getToUser().getId()).get(0).getAccountId(),
                 transfer.getAmount());
 
         return getTransferById(newId);
@@ -41,12 +42,12 @@ public class JdbcTransferDao implements TransferDao {
 
         String sql =
 
-                "SELECT transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, from_user_id, to_user_id, amount " +
-                "FROM " +
-                "(SELECT user_id as from_user_id, account_id as from_account FROM account JOIN tenmo_user USING(user_id)) account_from_data " +
-                "JOIN transfer ON transfer.account_from = account_from_data.from_account " +
-                "JOIN (SELECT user_id as to_user_id, account_id as to_account FROM account) to_account_data ON to_account = transfer.account_to " +
-                "JOIN transfer_status USING (transfer_status_id)\n" +
+                "SELECT from_username, to_username, transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, from_user_id, to_user_id, amount \n" +
+                "FROM \n" +
+                "(SELECT username as from_username, user_id as from_user_id, account_id as from_account FROM account JOIN tenmo_user USING(user_id)) account_from_data\n" +
+                "JOIN transfer ON transfer.account_from = account_from_data.from_account\n" +
+                "JOIN (SELECT username as to_username, user_id as to_user_id, account_id as to_account FROM account JOIN tenmo_user USING(user_id)) to_account_data ON to_account = transfer.account_to \n" +
+                " JOIN transfer_status USING (transfer_status_id)\n" +
                 "JOIN transfer_type USING(transfer_type_id) " +
                 "WHERE transfer_id = ?;";
 
@@ -63,12 +64,12 @@ public class JdbcTransferDao implements TransferDao {
     public List<Transfer> getAllTransfersForUser(int userId) {
         String sql =
 
-                "SELECT transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, from_user_id, to_user_id, amount " +
-                "FROM " +
-                "(SELECT user_id as from_user_id, account_id as from_account FROM account JOIN tenmo_user USING(user_id)) account_from_data " +
-                "JOIN transfer ON transfer.account_from = account_from_data.from_account " +
-                "JOIN (SELECT user_id as to_user_id, account_id as to_account FROM account) to_account_data ON to_account = transfer.account_to " +
-                "JOIN transfer_status USING (transfer_status_id)\n" +
+                "SELECT from_username, to_username, transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, from_user_id, to_user_id, amount \n" +
+                "FROM \n" +
+                "(SELECT username as from_username, user_id as from_user_id, account_id as from_account FROM account JOIN tenmo_user USING(user_id)) account_from_data\n" +
+                "JOIN transfer ON transfer.account_from = account_from_data.from_account\n" +
+                "JOIN (SELECT username as to_username, user_id as to_user_id, account_id as to_account FROM account JOIN tenmo_user USING(user_id)) to_account_data ON to_account = transfer.account_to \n" +
+                " JOIN transfer_status USING (transfer_status_id)\n" +
                 "JOIN transfer_type USING(transfer_type_id) " +
                 "WHERE from_user_id = ? OR to_user_id = ?;";
 
@@ -102,8 +103,8 @@ public class JdbcTransferDao implements TransferDao {
                 transfer.getTransferId(),
                 getTransferTypeIdByDesc(transfer.getTransferType()),
                 getTransferStatusIdByDesc(transfer.getTransferStatus()),
-                accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0).getAccountId(),
-                accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0).getAccountId(),
+                accountDao.getAllAccountsByUser(transfer.getFromUser().getId()).get(0).getAccountId(),
+                accountDao.getAllAccountsByUser(transfer.getToUser().getId()).get(0).getAccountId(),
                 transfer.getAmount(),
                 transferId);
 
@@ -126,12 +127,25 @@ public class JdbcTransferDao implements TransferDao {
         transfer.setTransferId(row.getInt("transfer_id"));
         transfer.setTransferType(row.getString("transfer_type_desc"));
         transfer.setTransferStatus(row.getString("transfer_status_id"));
-        transfer.setUserFromId(row.getInt("from_user_id"));
-        transfer.setUserToId(row.getInt("to_user_id"));
+        transfer.setFromUser(mapRowToFromUserPublicData(row));
+        transfer.setToUser(mapRowToToUserPublicData(row));
         transfer.setAmount(row.getDouble("amount"));
         return transfer;
     }
 
+    private UserPublicData mapRowToFromUserPublicData(SqlRowSet row){
+        UserPublicData user = new UserPublicData()
+                .setUsername(row.getString("from_username"))
+                .setId(row.getInt("from_user_id"));
+        return user;
+    }
+
+    private UserPublicData mapRowToToUserPublicData(SqlRowSet row){
+        UserPublicData user = new UserPublicData()
+                .setUsername(row.getString("to_username"))
+                .setId(row.getInt("to_user_id"));
+        return user;
+    }
 
     private int getTransferStatusIdByDesc(String transferStatusDesc){
         String sql = "SELECT transfer_status_id FROM transfer_status WHERE transfer_status_desc = ?;";
