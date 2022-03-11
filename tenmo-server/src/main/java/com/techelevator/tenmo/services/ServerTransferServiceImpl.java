@@ -32,8 +32,8 @@ public class ServerTransferServiceImpl implements ServerTransferService {
 
         transfer.setTransferStatus("Approved");
 
-        Account fromAccount = accountDao.getAccountById(transfer.getAccountFromId());
-        Account toAccount = accountDao.getAccountById(transfer.getAccountToId());
+        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0);
+        Account toAccount = accountDao.getAllAccountsByUser(transfer.getUserToId()).get(0);
         double amount = transfer.getAmount();
 
         fromAccount.subtractFromBalance(amount);
@@ -48,7 +48,7 @@ public class ServerTransferServiceImpl implements ServerTransferService {
     @Override
     public Transfer saveTransferRequest(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException {
         transfer.setTransferStatus("Pending");
-        validTransferCheck(transfer);
+        validAccountsForTransferCheck(transfer);
         return transferDao.create(transfer);
     }
 
@@ -59,34 +59,37 @@ public class ServerTransferServiceImpl implements ServerTransferService {
 
     @Override
     public boolean isPrincipalFromAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException {
-        int userId = userDao.findIdByUsername(principal.getName());
-        int fromAccountUserId = accountDao.getAccountById(transfer.getAccountFromId()).getUserId();
-        return userId == fromAccountUserId;
+        int userId = userDao.findIdByUsername(principal.getName());;
+        return userId == transfer.getUserFromId();
     }
 
     @Override
     public boolean isPrincipalToAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException {
         int userId = userDao.findIdByUsername(principal.getName());
-        int toAccountUserId = accountDao.getAccountById(transfer.getAccountToId()).getUserId();
-        return userId == toAccountUserId;
+        return userId == transfer.getUserToId();
     }
 
     private boolean hasSufficientFunds(Account fromAccount, double amount){
         return fromAccount.getBalance() >= amount;
     }
 
-
     private void validTransferCheck(Transfer transfer) throws AccountNotFoundException {
-        Account fromAccount = accountDao.getAccountById(transfer.getAccountFromId());
-        Account toAccount = accountDao.getAccountById(transfer.getAccountToId());
-        double amount = transfer.getAmount();
+        validAccountsForTransferCheck(transfer);
 
-        if(fromAccount.getAccountId() == toAccount.getAccountId()){
-            throw new IllegalArgumentException("Accounts cannot be the same.");
-        }
+        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0);
+        double amount = transfer.getAmount();
 
         if(!hasSufficientFunds(fromAccount, amount)){
             throw new IllegalStateException("Account from balance must be equal to or greater than transfer amount)");
+        }
+    }
+
+    private void validAccountsForTransferCheck(Transfer transfer) throws AccountNotFoundException {
+        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getUserFromId()).get(0);
+        Account toAccount = accountDao.getAllAccountsByUser(transfer.getUserToId()).get(0);
+
+        if(fromAccount.getAccountId() == toAccount.getAccountId()){
+            throw new IllegalArgumentException("Accounts cannot be the same.");
         }
     }
 }

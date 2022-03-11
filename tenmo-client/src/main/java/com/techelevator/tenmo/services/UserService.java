@@ -34,6 +34,8 @@ public class UserService {
         return userList;
     }
 
+
+
     private HttpEntity<Void> makeAuthEntity(AuthenticatedUser currentUser) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(currentUser.getToken());
