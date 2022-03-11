@@ -9,8 +9,8 @@ import java.security.Principal;
 
 public interface ServerTransferService {
 
-    public void completeTransfer(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
-    public void saveTransferRequest(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
+    public Transfer completeTransfer(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
+    public Transfer saveTransferRequest(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
     public boolean isPrincipalPartyToTransfer(Principal principal, Transfer transfer) throws AccountNotFoundException;
     public boolean isPrincipalFromAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException;
     public boolean isPrincipalToAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException;

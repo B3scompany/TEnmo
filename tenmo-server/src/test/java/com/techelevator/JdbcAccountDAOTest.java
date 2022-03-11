@@ -11,7 +11,6 @@ public class JdbcAccountDAOTest extends BaseDaoTest{
     private Account testAccount;
     @Before
     public void setup(){
-        sut = new JdbcAccountDao(dataSource);
     }
 
 }
