@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.services;
 
 
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 
@@ -46,6 +47,14 @@ public class ConsoleService {
         System.out.println("5: Request TE bucks");
         System.out.println("0: Exit");
         System.out.println();
+    }
+    public void printTransferHistory(){
+        System.out.println();
+        System.out.println("--------------------------------");
+        System.out.println("Transfers");
+        System.out.println("ID       From/To         Amount" );
+        System.out.println("--------------------------------");
+
     }
 
     public UserCredentials promptForCredentials() {
@@ -96,6 +105,17 @@ public class ConsoleService {
             System.out.println(userList.get(i-1).getUsername());
         }
         System.out.println("0. Cancel Transfer");
+    }
+    public void printTransferDetails(Transfer transfer){
+        System.out.println("------------------------");
+        System.out.println("Transfer details");
+        System.out.println("------------------------");
+        System.out.println("Id: " + transfer.getTransferId());
+        System.out.println("From: " + transfer.getFromUser().getUsername());
+        System.out.println("To: " + transfer.getToUser().getUsername());
+        System.out.println("Type: " + transfer.getTransferType());
+        System.out.println("Status: " + transfer.getTransferStatus());
+        System.out.println("Amount: $" + transfer.getAmount());
     }
 
     public void printMessage(String message){

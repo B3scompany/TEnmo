@@ -37,7 +37,7 @@ public class AccountController {
     @RequestMapping(path = "/users/{userId}/accounts/balance", method = RequestMethod.GET)
     public double getBalance(@PathVariable int userId, Principal principal) throws AccountNotFoundException, AuthorizationException {
 
-        if(principal.getName() != userDao.findByUserId(userId).getUsername()){
+        if(!principal.getName().equalsIgnoreCase(userDao.findByUserId(userId).getUsername())){
             throw new AuthorizationException();
         }
 
@@ -45,7 +45,7 @@ public class AccountController {
 
         BigDecimal bigDecimalTotalBalance = BigDecimal.valueOf(0);
         for(Account account: accounts){
-            bigDecimalTotalBalance.add(BigDecimal.valueOf(account.getBalance()));
+           bigDecimalTotalBalance = bigDecimalTotalBalance.add(BigDecimal.valueOf(account.getBalance()));
         }
         return bigDecimalTotalBalance.doubleValue();
     }
