@@ -93,22 +93,30 @@ public class App {
     }
 
 	private void viewCurrentBalance() { //Robert
-		// TODO Auto-generated method stub
-		// accountService.getUserBalance(currentUser)
-        // print stuff out
 
-        System.out.println("Your current balance is: " + accountService.getCurrentBalance(currentUser));
+        System.out.println("Your current balance is: $" + accountService.getCurrentBalance(currentUser));
 	}
 
 	private void viewTransferHistory() { //Robert
-		// TODO Auto-generated method stub
         List<Transfer> transferHistory = transferService.transferHistory(currentUser);
-		for(Transfer transfer : transferHistory){
-            System.out.println(currentUser.getUser().getUsername());
-            System.out.println(transfer.getTransferType());
-            System.out.println("$" + transfer.getAmount() + " Paid to userID:" + transfer.getUserToId());
+        consoleService.printTransferHistory();
+        for (Transfer transfer : transferHistory) {
+            double amountTransferred = transfer.getAmount();
+            System.out.println();
+            System.out.println(transfer.getTransferId() + "      " +
+                    transferService.sendOrReceive(transfer, currentUser) + "       $" +
+                    amountTransferred);
         }
-	}
+        System.out.println("----------");
+        int transferSelection = consoleService.promptForInt("Please enter transfer ID to view details (0 to cancel): ");
+        for(Transfer transfer : transferHistory){
+            if(transferSelection == transfer.getTransferId()){
+               transfer = transferService.getTransferDetails(transferSelection);
+                consoleService.printTransferDetails(transfer);
+            }
+        }
+
+    }
 
 	private void viewPendingRequests() { //Maybe
 		// TODO Auto-generated method stub

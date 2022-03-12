@@ -25,7 +25,6 @@ public class AccountService {
              restTemplate.exchange(API_BASE_URL + "users/" + currentUser.getUser().getId() + "/accounts/balance",
                      HttpMethod.GET, makeAuthEntity(currentUser), Double.class);
              balance = response.getBody();
-            System.out.println(balance);
         }catch(RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
