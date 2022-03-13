@@ -24,8 +24,7 @@ public class JdbcAccountDAOTest extends BaseDaoTest{
 
     @Before
     public void setup() {
-        UserDao userDao = new JdbcUserDao(new JdbcTemplate(dataSource));
-        sut = new JdbcAccountDao(new JdbcTemplate(dataSource), userDao);
+        sut = new JdbcAccountDao(new JdbcTemplate(dataSource));
     }
 
     @Test
