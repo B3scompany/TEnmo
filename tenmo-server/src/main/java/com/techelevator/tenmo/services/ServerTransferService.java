@@ -11,6 +11,8 @@ public interface ServerTransferService {
 
     public Transfer completeTransfer(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
     public Transfer saveTransferRequest(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
+    public Transfer approvePendingTransfer(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
+    public Transfer rejectPendingTransfer(Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
     public boolean isPrincipalPartyToTransfer(Principal principal, Transfer transfer) throws AccountNotFoundException;
     public boolean isPrincipalFromAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException;
     public boolean isPrincipalToAccountUser(Principal principal, Transfer transfer) throws AccountNotFoundException;

@@ -31,16 +31,8 @@ public class ServerTransferServiceImpl implements ServerTransferService {
         validTransferCheck(transfer);
 
         transfer.setTransferStatus("Approved");
+        updateAccountsWithCompletedTransfer(transfer);
 
-        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getFromUser().getId()).get(0);
-        Account toAccount = accountDao.getAllAccountsByUser(transfer.getToUser().getId()).get(0);
-        double amount = transfer.getAmount();
-
-        fromAccount.subtractFromBalance(amount);
-        toAccount.addToBalance(amount);
-
-        accountDao.update(fromAccount, fromAccount.getAccountId());
-        accountDao.update(toAccount, toAccount.getAccountId());
         return transferDao.create(transfer);
 
     }
@@ -50,6 +42,40 @@ public class ServerTransferServiceImpl implements ServerTransferService {
         transfer.setTransferStatus("Pending");
         validAccountsForTransferCheck(transfer);
         return transferDao.create(transfer);
+    }
+
+    @Override
+    public Transfer approvePendingTransfer(Transfer transfer) throws TransferNotFoundException, AccountNotFoundException {
+
+        if(transfer == null){
+            throw new IllegalArgumentException("Transfer parameter must not be null.");
+        }
+
+        if(!transfer.getTransferStatus().equalsIgnoreCase("Pending")){
+            throw new IllegalArgumentException("Only pending transfers may be approved.");
+        }
+
+        transfer.setTransferStatus("Approved");
+        validTransferCheck(transfer);
+        updateAccountsWithCompletedTransfer(transfer);
+
+        return transferDao.updateTransfer(transfer, transfer.getTransferId());
+
+    }
+
+    public Transfer rejectPendingTransfer(Transfer transfer) throws  TransferNotFoundException{
+
+        if(transfer == null){
+            throw new IllegalArgumentException("Transfer parameter must not be null.");
+        }
+
+        if(!transfer.getTransferStatus().equalsIgnoreCase("Pending")){
+            throw new IllegalArgumentException("Only pending transfers may be rejected.");
+        }
+
+        transfer.setTransferStatus("Rejected");
+
+        return transferDao.updateTransfer(transfer, transfer.getTransferId());
     }
 
     @Override
@@ -91,5 +117,19 @@ public class ServerTransferServiceImpl implements ServerTransferService {
         if(fromAccount.getAccountId() == toAccount.getAccountId()){
             throw new IllegalArgumentException("Accounts cannot be the same.");
         }
+    }
+
+    private void updateAccountsWithCompletedTransfer(Transfer transfer) throws AccountNotFoundException {
+
+        Account fromAccount = accountDao.getAllAccountsByUser(transfer.getFromUser().getId()).get(0);
+        Account toAccount = accountDao.getAllAccountsByUser(transfer.getToUser().getId()).get(0);
+        double amount = transfer.getAmount();
+
+        fromAccount.subtractFromBalance(amount);
+        toAccount.addToBalance(amount);
+
+        accountDao.update(fromAccount, fromAccount.getAccountId());
+        accountDao.update(toAccount, toAccount.getAccountId());
+
     }
 }

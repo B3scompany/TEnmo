@@ -108,14 +108,14 @@ public class App {
 
 	private void sendBucks() { //Scott
         List<User> userList = userService.getAllUsersExceptCurrentUser(currentUser);
-		User recipientUser = chooseRecipientUser(userList);
+		User recipientUser = chooseCounterparty("Please select a user to send bucks to: ");
 
         if(recipientUser != null){
             double amountToSend = chooseAmountToSend();
             Transfer transfer = transferService.transferOf(currentUser.getUser(), recipientUser, amountToSend, "Send", "Approved");
-            Transfer completed = transferService.submitSendTransfer(transfer, currentUser);
+            Transfer completed = transferService.submitTransfer(transfer, currentUser);
             if(completed != null){
-                consoleService.printMessage("Transfer completed: " + completed.getTransferId());
+                consoleService.printMessage("Transfer completed -- Transfer Id - " + completed.getTransferId());
             } else {
                 consoleService.printMessage("Error completing transfer.");
             }
@@ -123,17 +123,29 @@ public class App {
 	}
 
 	private void requestBucks() { //Scott
-		// TODO Auto-generated method stub
-		
+
+        User fromUser = chooseCounterparty("Please select a user to request bucks from:");
+
+        if(fromUser != null){
+            double amountToRequest = chooseAmountToRequest();
+            Transfer transfer = transferService.transferOf(fromUser, currentUser.getUser(), amountToRequest, "Request", "Pending");
+            Transfer completed = transferService.submitTransfer(transfer, currentUser);
+            if(completed != null){
+                consoleService.printMessage("Transfer requested -- Transfer Id - " + completed.getTransferId());
+            } else {
+                consoleService.printMessage("Error completing transfer.");
+            }
+        }
 	}
 
-    private User chooseRecipientUser(List<User> userList){
+    private User chooseCounterparty(String promptMessage){
 
+        List<User> userList = userService.getAllUsersExceptCurrentUser(currentUser);
         int recipientSelection = -1;
 
         while(recipientSelection < 0 || recipientSelection > userList.size()) {
             consoleService.printUserList(userList);
-            recipientSelection = consoleService.promptForInt("Please choose a user to send bucks to: ");
+            recipientSelection = consoleService.promptForInt(promptMessage);
         }
 
         if(recipientSelection == 0) { return null; }
@@ -144,6 +156,10 @@ public class App {
 
     private double chooseAmountToSend(){
         return consoleService.promptForBigDecimal("Please enter an amount to send: ").doubleValue();
+    }
+
+    private double chooseAmountToRequest(){
+        return consoleService.promptForBigDecimal("Please enter an amount to request: ").doubleValue();
     }
 
 }
