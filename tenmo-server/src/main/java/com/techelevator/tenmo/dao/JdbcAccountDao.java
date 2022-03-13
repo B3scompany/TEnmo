@@ -1,8 +1,8 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exception.AccountNotFoundException;
-import com.techelevator.tenmo.exception.UserNotFoundException;
 import com.techelevator.tenmo.model.Account;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -13,9 +13,11 @@ import java.util.List;
 
 @Component
 public class JdbcAccountDao implements AccountDao {
+
     private final JdbcTemplate jdbcTemplate;
     private final UserDao userDao;
 
+    @Autowired
     public JdbcAccountDao(JdbcTemplate jdbcTemplate, UserDao userDao){
         this.jdbcTemplate = jdbcTemplate;
         this.userDao = userDao;
@@ -34,7 +36,7 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public List<Account> getAllAccountsByUser(int userId) {
+    public List<Account> getAllAccountsByUser(int userId) throws AccountNotFoundException {
         List<Account> accounts = new ArrayList<>();
         String sql = "SELECT * " +
                 "FROM account " +
@@ -45,6 +47,11 @@ public class JdbcAccountDao implements AccountDao {
             Account account = mapRowToAccount(results);
             accounts.add(account);
         }
+
+        if(accounts.size() == 0){
+            throw new AccountNotFoundException("No account found for user id: " + userId);
+        }
+
         return accounts;
     }
 
@@ -71,7 +78,7 @@ public class JdbcAccountDao implements AccountDao {
         }
     }
     public Account mapRowToAccount(SqlRowSet rowSet){
-        Account account = new Account(userDao);
+        Account account = new Account();
         account.setAccountId(rowSet.getInt("account_id"));
         account.setUserId(rowSet.getInt("user_id"));
         account.setBalance(rowSet.getDouble("balance"));

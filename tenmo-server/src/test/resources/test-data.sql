@@ -57,10 +57,17 @@ INSERT INTO transfer_status (transfer_status_desc) VALUES ('Approved');
 INSERT INTO transfer_status (transfer_status_desc) VALUES ('Rejected');
 INSERT INTO transfer_type (transfer_type_desc) VALUES ('Request');
 INSERT INTO transfer_type (transfer_type_desc) VALUES ('Send');
--- TODO: add more data here
-INSERT INTO account (account_id, user_id, balance) VALUES (1, 1, 1000);
-INSERT INTO account (account_id, user_id, balance) VALUES (2, 2, 2000);
-INSERT INTO account (account_id, user_id, balance) VALUES (3, 3, 3000);
-INSERT INTO account (account_id, user_id, balance) VALUES (4, 3, 4000);
-INSERT INTO tenmo_user (username, password_hash) VALUES ('user', 'password');
+INSERT into tenmo_user (username, password_hash) VALUES ('a', '1111');
+INSERT into tenmo_user (username, password_hash) VALUES ('b', '2222');
+INSERT into tenmo_user (username, password_hash) VALUES ('c', '3333');
+INSERT into tenmo_user (username, password_hash) VALUES ('d', '4444');
+INSERT INTO account (user_id, balance) VALUES (1001, 1000);
+INSERT INTO account (user_id, balance) VALUES (1002, 2000);
+INSERT INTO account (user_id, balance) VALUES (1003, 3000);
+INSERT INTO account (user_id, balance) VALUES (1004, 4000);
+INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (2, 2, 2001, 2002, 11.11);
+INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (1, 1, 2002, 2003, 22.22);
+INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (1, 3, 2001, 2003, 33.33);
+
+
 COMMIT;

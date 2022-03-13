@@ -9,6 +9,12 @@ public class UserPublicData {
         return id;
     }
 
+    public UserPublicData(){}
+    public UserPublicData(int id, String username){
+        this.id = id;
+        this.username = username;
+    }
+
     public UserPublicData setId(int id) {
         this.id = id;
         return this;

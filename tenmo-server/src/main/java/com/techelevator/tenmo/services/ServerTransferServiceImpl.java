@@ -63,7 +63,7 @@ public class ServerTransferServiceImpl implements ServerTransferService {
 
     }
 
-    public Transfer rejectPendingTransfer(Transfer transfer) throws  TransferNotFoundException{
+    public Transfer rejectPendingTransfer(Transfer transfer) throws TransferNotFoundException, AccountNotFoundException {
 
         if(transfer == null){
             throw new IllegalArgumentException("Transfer parameter must not be null.");

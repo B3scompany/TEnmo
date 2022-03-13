@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exception.AccountNotFoundException;
 import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.UserPublicData;
@@ -22,7 +23,7 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public Transfer create(Transfer transfer) throws TransferNotFoundException {
+    public Transfer create(Transfer transfer) throws TransferNotFoundException, AccountNotFoundException {
         String sql = "INSERT INTO transfer " +
                 "(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                 "VALUES(?, ?, ?, ?, ?) RETURNING transfer_id;";
@@ -42,7 +43,7 @@ public class JdbcTransferDao implements TransferDao {
 
         String sql =
 
-                "SELECT from_username, to_username, transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, from_user_id, to_user_id, amount \n" +
+                "SELECT from_username, to_username, transfer_id, transfer_status_desc, transfer_type_desc, from_user_id, to_user_id, amount \n" +
                 "FROM \n" +
                 "(SELECT username as from_username, user_id as from_user_id, account_id as from_account FROM account JOIN tenmo_user USING(user_id)) account_from_data\n" +
                 "JOIN transfer ON transfer.account_from = account_from_data.from_account\n" +
@@ -64,7 +65,7 @@ public class JdbcTransferDao implements TransferDao {
     public List<Transfer> getAllTransfersForUser(int userId) {
         String sql =
 
-                "SELECT from_username, to_username, transfer_id, transfer_status_desc, transfer_type_desc, transfer_status_id, from_user_id, to_user_id, amount \n" +
+                "SELECT from_username, to_username, transfer_id, transfer_status_desc, transfer_type_desc, from_user_id, to_user_id, amount \n" +
                 "FROM \n" +
                 "(SELECT username as from_username, user_id as from_user_id, account_id as from_account FROM account JOIN tenmo_user USING(user_id)) account_from_data\n" +
                 "JOIN transfer ON transfer.account_from = account_from_data.from_account\n" +
@@ -88,7 +89,7 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public Transfer updateTransfer(Transfer transfer, int transferId) throws TransferNotFoundException {
+    public Transfer updateTransfer(Transfer transfer, int transferId) throws TransferNotFoundException, AccountNotFoundException {
 
         String sql = "UPDATE transfer " +
                 "SET transfer_id = ?," +
@@ -126,7 +127,7 @@ public class JdbcTransferDao implements TransferDao {
         Transfer transfer = new Transfer();
         transfer.setTransferId(row.getInt("transfer_id"));
         transfer.setTransferType(row.getString("transfer_type_desc"));
-        transfer.setTransferStatus(row.getString("transfer_status_id"));
+        transfer.setTransferStatus(row.getString("transfer_status_desc"));
         transfer.setFromUser(mapRowToFromUserPublicData(row));
         transfer.setToUser(mapRowToToUserPublicData(row));
         transfer.setAmount(row.getDouble("amount"));

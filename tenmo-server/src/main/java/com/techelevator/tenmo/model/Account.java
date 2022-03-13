@@ -3,6 +3,7 @@ package com.techelevator.tenmo.model;
 import com.techelevator.tenmo.dao.UserDao;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -13,11 +14,16 @@ public class Account {
     private int accountId;
     @Min(value = 1, message = "User Id should be a positive integer value")
     private int userId;
+    @PositiveOrZero
     private double balance;
-    private UserDao userDao;
 
-    public Account(UserDao userDao){
-        this.userDao = userDao;
+
+    public Account(){}
+
+    public Account(int accountId, int userId, double balance) {
+        this.accountId = accountId;
+        this.userId = userId;
+        this.balance = balance;
     }
 
     public int getAccountId() {
@@ -64,10 +70,6 @@ public class Account {
         BigDecimal bigDecimalBalance = new BigDecimal(balance);
         BigDecimal bigDecimalAmount = new BigDecimal(amount);
         balance = bigDecimalBalance.subtract(bigDecimalAmount).doubleValue();
-    }
-
-    public User getAccountUser(){
-        return userDao.findByUserId(userId);
     }
 
 }
