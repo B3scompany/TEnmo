@@ -19,6 +19,22 @@ public class TransferService {
     private static final String API_BASE_URL = "http://localhost:8080/";
 
     public Transfer submitTransfer(Transfer transfer, AuthenticatedUser currentUser){
+    public List<Transfer> transferHistory(AuthenticatedUser currentUser){
+        List<Transfer> transferHistory = null;
+        try{
+            ResponseEntity<Transfer[]> response =
+                    restTemplate.exchange(API_BASE_URL + "transfers", HttpMethod.GET,
+                            makeAuthEntity(currentUser), Transfer[].class);
+            Transfer[] transfers = response.getBody();
+            transferHistory = new ArrayList<>(List.of(transfers));
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transferHistory;
+
+    }
+
+    public Transfer submitSendTransfer(Transfer transfer, AuthenticatedUser currentUser){
         Transfer result = null;
         try {
             ResponseEntity<Transfer> response =
@@ -32,13 +48,31 @@ public class TransferService {
     }
 
     public Transfer transferOf(User fromUser, User toUser, double amount, String transferType, String transferStatus){
-        Transfer result = new Transfer()
-                .setFromUser(new UserPublicData().setUsername(fromUser.getUsername()).setId(fromUser.getId().intValue()))
-                .setToUser(new UserPublicData().setUsername(toUser.getUsername()).setId(toUser.getId().intValue()))
-                .setAmount(amount)
-                .setTransferType(transferType)
-                .setTransferStatus(transferStatus);
+        Transfer result = new Transfer();
+                result.setFromUser(new UserPublicData().setUsername(fromUser.getUsername()).setId(fromUser.getId().intValue()));
+                result.setToUser(new UserPublicData().setUsername(toUser.getUsername()).setId(toUser.getId().intValue()));
+                result.setAmount(amount);
+                result.setTransferType(transferType);
+                result.setTransferStatus(transferStatus);
         return result;
+    }
+    public String sendOrReceive(Transfer transfer, AuthenticatedUser currentUser){
+        if(transfer.getFromUser().getId() == currentUser.getUser().getId()){
+            return "To: " + transfer.getToUser().getUsername();
+        }
+        return "From: " + transfer.getFromUser().getUsername();
+    }
+
+    public Transfer getTransferDetails(int transferId){
+        Transfer transfer = null;
+        try{
+            transfer = restTemplate.getForObject(API_BASE_URL + "transfers/" + transferId,
+                     Transfer.class);
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transfer;
+
     }
 
     private HttpEntity<Void> makeAuthEntity(AuthenticatedUser currentUser) {
