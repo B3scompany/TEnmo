@@ -75,6 +75,31 @@ public class TransferService {
         return transfer;
 
     }
+    public Transfer approve(int transferId, AuthenticatedUser currentUser){
+        makeAuthEntity(currentUser);
+        Transfer transfer = null;
+        try{
+            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "transfers/" + transferId + "/approve",
+                    HttpMethod.PUT, makeAuthEntity(currentUser), Transfer.class);
+            transfer = response.getBody();
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transfer;
+    }
+    public Transfer reject(int transferId, AuthenticatedUser currentUser){
+        makeAuthEntity(currentUser);
+        Transfer transfer = null;
+        try{
+            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "transfers/" + transferId + "/reject",
+                    HttpMethod.PUT, makeAuthEntity(currentUser), Transfer.class);
+            transfer = response.getBody();
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transfer;
+    }
+
 
     private HttpEntity<Void> makeAuthEntity(AuthenticatedUser currentUser) {
         HttpHeaders headers = new HttpHeaders();

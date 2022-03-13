@@ -118,6 +118,16 @@ public class ConsoleService {
         System.out.println("Status: " + transfer.getTransferStatus());
         System.out.println("Amount: $" + transfer.getAmount());
     }
+    public void printPendingTransfer(List<Transfer> transfers){
+        System.out.println("------------------");
+        System.out.println();
+    }
+    public void approveOrRejectTransfer(){
+        System.out.println("1: Approve");
+        System.out.println("2: Reject");
+        System.out.println("0: Don't approve or reject");
+        System.out.println("-------");
+    }
 
     public void printMessage(String message){
         System.out.println(message);
