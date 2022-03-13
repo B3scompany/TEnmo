@@ -1,4 +1,6 @@
 package com.techelevator;
+import com.techelevator.tenmo.dao.AccountDao;
+import com.techelevator.tenmo.dao.UserDao;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +12,10 @@ import java.sql.SQLException;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestingDatabaseConfig.class)
 public abstract class BaseDaoTest {
+
     @Autowired
     protected DataSource dataSource;
+
     @After
     public void rollback() throws SQLException {
         dataSource.getConnection().rollback();

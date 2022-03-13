@@ -10,7 +10,7 @@ public interface AccountDao {
 
 
     public Account getAccountById(int accountId) throws AccountNotFoundException;
-    public List<Account> getAllAccountsByUser(int userId);
+    public List<Account> getAllAccountsByUser(int userId) throws AccountNotFoundException;
     public Account update(Account account, int accountId) throws AccountNotFoundException;
     public void delete(int accountId) throws AccountNotFoundException;
 

@@ -20,6 +20,17 @@ public class Transfer {
     @Positive(message = "transfer amount must be positive.")
     private double amount;
 
+    public Transfer(){}
+
+    public Transfer(int transferId, String transferType, String transferStatus, UserPublicData fromUser, UserPublicData toUser, double amount) {
+        this.transferId = transferId;
+        this.transferType = transferType;
+        this.transferStatus = transferStatus;
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+        this.amount = amount;
+    }
+
     public int getTransferId() {
         return transferId;
     }

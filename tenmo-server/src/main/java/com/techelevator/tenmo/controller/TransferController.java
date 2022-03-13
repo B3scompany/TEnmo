@@ -63,6 +63,30 @@ public class TransferController {
         }
     }
 
+    @RequestMapping(path = "transfer/{id}/approve}", method = RequestMethod.PUT)
+    public Transfer approvePendingTransfer(@PathVariable(value = "id") int transferId, Principal principal) throws TransferNotFoundException, AccountNotFoundException {
+        Transfer transfer = transferDao.getTransferById(transferId);
+
+        if(!transferService.isPrincipalFromAccountUser(principal, transfer)){
+            throw new IllegalStateException("Only the user from whose account the transfer is requested may approve the transfer.");
+        }
+
+        return transferService.approvePendingTransfer(transfer);
+
+    }
+
+    @RequestMapping(path = "transfer/{id}/reject}", method = RequestMethod.PUT)
+    public Transfer rejectPendingTransfer(@PathVariable(value = "id") int transferId, Principal principal) throws TransferNotFoundException, AccountNotFoundException {
+        Transfer transfer = transferDao.getTransferById(transferId);
+
+        if(!transferService.isPrincipalFromAccountUser(principal, transfer)){
+            throw new IllegalStateException("Only the user from whose account the transfer is requested may reject the transfer.");
+        }
+
+        return transferService.rejectPendingTransfer(transfer);
+
+    }
+
     // getTransferById(int transferId) Robert
     @RequestMapping(path = "/transfers/{id}", method = RequestMethod.GET)
     public Transfer getTransferById(@PathVariable("id") int transferID) throws TransferNotFoundException {
