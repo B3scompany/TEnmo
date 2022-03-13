@@ -63,7 +63,7 @@ public class TransferController {
         }
     }
 
-    @RequestMapping(path = "transfer/{id}/approve}", method = RequestMethod.PUT)
+    @RequestMapping(path = "transfers/{id}/approve", method = RequestMethod.PUT)
     public Transfer approvePendingTransfer(@PathVariable(value = "id") int transferId, Principal principal) throws TransferNotFoundException, AccountNotFoundException {
         Transfer transfer = transferDao.getTransferById(transferId);
 
@@ -75,7 +75,7 @@ public class TransferController {
 
     }
 
-    @RequestMapping(path = "transfer/{id}/reject}", method = RequestMethod.PUT)
+    @RequestMapping(path = "transfers/{id}/reject", method = RequestMethod.PUT)
     public Transfer rejectPendingTransfer(@PathVariable(value = "id") int transferId, Principal principal) throws TransferNotFoundException, AccountNotFoundException {
         Transfer transfer = transferDao.getTransferById(transferId);
 
