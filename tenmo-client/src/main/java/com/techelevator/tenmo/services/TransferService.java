@@ -18,7 +18,7 @@ public class TransferService {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String API_BASE_URL = "http://localhost:8080/";
 
-    public Transfer submitTransfer(Transfer transfer, AuthenticatedUser currentUser){
+
     public List<Transfer> transferHistory(AuthenticatedUser currentUser){
         List<Transfer> transferHistory = null;
         try{
@@ -34,7 +34,7 @@ public class TransferService {
 
     }
 
-    public Transfer submitSendTransfer(Transfer transfer, AuthenticatedUser currentUser){
+    public Transfer submitTransfer(Transfer transfer, AuthenticatedUser currentUser){
         Transfer result = null;
         try {
             ResponseEntity<Transfer> response =
@@ -56,6 +56,7 @@ public class TransferService {
                 result.setTransferStatus(transferStatus);
         return result;
     }
+
     public String sendOrReceive(Transfer transfer, AuthenticatedUser currentUser){
         if(transfer.getFromUser().getId() == currentUser.getUser().getId()){
             return "To: " + transfer.getToUser().getUsername();
