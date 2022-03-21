@@ -101,7 +101,7 @@ public class App {
         consoleService.printTransferHistory();
 
         for (Transfer transfer : transferHistory) {
-            if(transfer.getTransferStatus().equalsIgnoreCase("Approved")) {
+            if(transfer.getTransferStatus().equalsIgnoreCase("Approved") || transfer.getTransferStatus().equalsIgnoreCase("Pending")) {
                 double amountTransferred = transfer.getAmount();
                 System.out.println();
                 System.out.println(transfer.getTransferId() + "      " +
@@ -139,8 +139,11 @@ public class App {
             if(transfer.getTransferId() == transferSelection){
                 consoleService.approveOrRejectTransfer();
                int approvalSelection = consoleService.promptForInt("Please choose an option: ");
-               if(approvalSelection == 1){
+               if(approvalSelection == 1 && transfer.getAmount() <= accountService.getCurrentBalance(currentUser)){
                    transferService.approve(transfer.getTransferId(), currentUser);
+               }
+               else if(approvalSelection == 1 && transfer.getAmount() > accountService.getCurrentBalance(currentUser)){
+                   System.out.println("Error Completing Transfer");
                }
                else if(approvalSelection == 2){
                    transferService.reject(transfer.getTransferId(), currentUser);
