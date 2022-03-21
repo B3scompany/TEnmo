@@ -99,12 +99,15 @@ public class App {
 	private void viewTransferHistory() { //Robert
         List<Transfer> transferHistory = transferService.transferHistory(currentUser);
         consoleService.printTransferHistory();
+
         for (Transfer transfer : transferHistory) {
-            double amountTransferred = transfer.getAmount();
-            System.out.println();
-            System.out.println(transfer.getTransferId() + "      " +
-                    transferService.sendOrReceive(transfer, currentUser) + "       $" +
-                    amountTransferred);
+            if(transfer.getTransferStatus().equalsIgnoreCase("Approved") || transfer.getTransferStatus().equalsIgnoreCase("Pending")) {
+                double amountTransferred = transfer.getAmount();
+                System.out.println();
+                System.out.println(transfer.getTransferId() + "      " +
+                        transferService.sendOrReceive(transfer, currentUser) + "       $" +
+                        amountTransferred);
+            }
         }
         System.out.println("----------");
         int transferSelection = consoleService.promptForInt("Please enter transfer ID to view details (0 to cancel): ");
@@ -118,7 +121,37 @@ public class App {
     }
 
 	private void viewPendingRequests() { //Maybe
-		// TODO Auto-generated method stub
+        List<Transfer> pendingTransferHistory = transferService.transferHistory(currentUser);
+        consoleService.printTransferHistory();
+
+        for (Transfer transfer : pendingTransferHistory) {
+            if (transfer.getTransferStatus().equalsIgnoreCase("Pending")) {
+                double amountTransferred = transfer.getAmount();
+                System.out.println();
+                System.out.println(transfer.getTransferId() + "      " +
+                        transferService.sendOrReceive(transfer, currentUser) + "       $" +
+                        amountTransferred);
+            }
+        }
+        int transferSelection = consoleService.promptForInt("Please enter transfer ID to view details (0 to cancel): ");
+
+        for(Transfer transfer : pendingTransferHistory){
+            if(transfer.getTransferId() == transferSelection){
+                consoleService.approveOrRejectTransfer();
+               int approvalSelection = consoleService.promptForInt("Please choose an option: ");
+               if(approvalSelection == 1 && transfer.getAmount() <= accountService.getCurrentBalance(currentUser)){
+                   transferService.approve(transfer.getTransferId(), currentUser);
+               }
+               else if(approvalSelection == 1 && transfer.getAmount() > accountService.getCurrentBalance(currentUser)){
+                   System.out.println("Error Completing Transfer");
+               }
+               else if(approvalSelection == 2){
+                   transferService.reject(transfer.getTransferId(), currentUser);
+               }
+
+
+            }
+        }
 		
 	}
 
