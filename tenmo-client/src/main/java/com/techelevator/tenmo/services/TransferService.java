@@ -72,9 +72,11 @@ public class TransferService {
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
+
         return transfer;
 
     }
+
     public Transfer approve(int transferId, AuthenticatedUser currentUser){
         makeAuthEntity(currentUser);
         Transfer transfer = null;
