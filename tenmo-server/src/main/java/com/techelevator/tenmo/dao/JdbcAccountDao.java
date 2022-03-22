@@ -55,6 +55,11 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public Account update(Account account, int accountId) throws AccountNotFoundException {
+
+        if(account.getAccountId() != accountId){
+            throw new IllegalArgumentException("Account Id parameter must match id of Account parameter");
+        }
+
         String sql = "UPDATE account " +
                 "SET balance = ?, account_id = ?, user_id = ? " +
                 "WHERE account_id = ?;";

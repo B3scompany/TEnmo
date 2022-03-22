@@ -16,7 +16,7 @@ public class JdbcUserDaoTest extends BaseDaoTest {
 
     @Test
     public void findByUsername_returns_user_that_is_not_null() {
-        User user = sut.findByUsername("user");
+        User user = sut.findByUsername("a");
         Assert.assertNotNull("findByUsername failed to find user in database", user);
     }
 

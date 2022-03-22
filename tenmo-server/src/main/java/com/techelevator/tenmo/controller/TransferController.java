@@ -96,8 +96,4 @@ public class TransferController {
     }
 
 
-    // private createTransfer(Transfer transfer) Scott
-
-
-
 }

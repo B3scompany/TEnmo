@@ -8,6 +8,7 @@ public class Transfer {
 
     @NotBlank
     private String transferType;
+
     @NotBlank
     private String transferStatus;
 

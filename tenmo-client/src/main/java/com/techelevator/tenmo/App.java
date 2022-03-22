@@ -120,7 +120,7 @@ public class App {
 
     }
 
-	private void viewPendingRequests() { //Maybe
+	private void viewPendingRequests() {
         List<Transfer> pendingTransferHistory = transferService.transferHistory(currentUser);
         consoleService.printTransferHistory();
 
@@ -155,7 +155,7 @@ public class App {
 		
 	}
 
-	private void sendBucks() { //Scott
+	private void sendBucks() {
         List<User> userList = userService.getAllUsersExceptCurrentUser(currentUser);
 		User recipientUser = chooseCounterparty("Please select a user to send bucks to: ");
 
@@ -171,7 +171,7 @@ public class App {
         }
 	}
 
-	private void requestBucks() { //Scott
+	private void requestBucks() {
 
         User fromUser = chooseCounterparty("Please select a user to request bucks from:");
 
